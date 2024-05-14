@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Pelajaran</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        td.lesson {
+            width: 14%;
+        }
+        .break {
+            background-color: #d9d9d9;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center;">Jadwal Pelajaran</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Waktu</th>
+                <th>Senin</th>
+                <th>Selasa</th>
+                <th>Rabu</th>
+                <th>Kamis</th>
+                <th>Jumat</th>
+            </tr>
+        </thead>
+        <tbody id="jadwalTable">
+        </tbody>
+    </table>
+
+    <script>
+        const jadwal = [
+            "Matematika",
+            "Bahasa Indonesia",
+            "Bahasa Inggris",
+            "IPA",
+            "IPS",
+            "Penjas",
+            "Seni Budaya"
+        ];
+
+        const colors = [
+            "#FF9999", // biru muda
+            "#FFCC99", // biru
+            "#FFFF99", // merah
+            "#CCFF99", // Hijau 
+            "#99FF99", // Hijau
+            "#99FFCC", // merah muda
+            "#99FFFF"  // oranye
+        ];
+
+        const hari = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"];
+        const startTime = 7 * 60 + 40; // 7:40 dalam menit
+        const endTime = 15 * 60; // 15:00 dalam menit
+        const lessonDuration = 60; // Durasi pelajaran dalam menit
+        const breakTime = { start: 11 * 60, end: 11 * 60 + 30 }; // Jam istirahat dari 11:00 hingga 11:30
+
+        const jadwalTable = document.getElementById('jadwalTable');
+        let currentTime = startTime;
+
+        while (currentTime < endTime) {
+            const row = document.createElement('tr');
+            const timeCell = document.createElement('td');
+            const hour = Math.floor(currentTime / 60);
+            const minutes = currentTime % 60;
+            timeCell.textContent = `${hour.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            row.appendChild(timeCell);
+
+            if (currentTime >= breakTime.start && currentTime < breakTime.end) {
+                // Waktu istirahat
+                for (let i = 0; i < hari.length; i++) {
+                    const breakCell = document.createElement('td');
+                    breakCell.textContent = "Istirahat";
+                    breakCell.classList.add('break');
+                    row.appendChild(breakCell);
+                }
+                currentTime = breakTime.end; // Lompat ke waktu setelah istirahat
+            } else {
+                for (let dayIndex = 0; dayIndex < hari.length; dayIndex++) {
+                    const lessonIndex = (dayIndex + Math.floor((currentTime - startTime) / lessonDuration)) % jadwal.length;
+                    const lessonCell = document.createElement('td');
+                    lessonCell.textContent = jadwal[lessonIndex];
+                    lessonCell.style.backgroundColor = colors[lessonIndex];
+                    lessonCell.classList.add('lesson');
+                    row.appendChild(lessonCell);
+                }
+                currentTime += lessonDuration;
+            }
+            jadwalTable.appendChild(row);
+        }
+    </script>
+</body>
+</html>
